@@ -1,6 +1,7 @@
 package br.com.iptu.reader;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -36,20 +38,37 @@ public class LeiaCVS implements ActionListener{
 		janela.add(painelBotoes, "South");
 		JButton botaoCarregar = new JButton("Gerar Arquivo");
 		botaoCarregar.setMnemonic(67);
-		JPanel painelInputs = new JPanel(new GridLayout());
+		JPanel painelInputs = new JPanel();
+		painelInputs.setLayout(null);
 		janela.add(painelInputs, "Center");
-		JRadioButton iptu = new JRadioButton("IPTU");
-		JRadioButton nomeContribuinte = new JRadioButton("Nome do contribuinte");
-		JRadioButton cepImovel = new JRadioButton("Cep do imóvel");
-		JRadioButton referenciaImovel = new JRadioButton("Referência do imóvel");
-		painelInputs.add(iptu, new GridLayout());
-		painelInputs.add(nomeContribuinte, new GridLayout());
-		painelInputs.add(cepImovel, new GridLayout());
-		painelInputs.add(referenciaImovel, new GridLayout());
-		JLabel jLabel = new JLabel("Digite o setor e quadra");
-		painelInputs.add(jLabel, "West");
+		JLabel jLabel2 = new JLabel("VOCÊ SÓ PODE SELECIONAR UM POR VEZ!!!");
+		jLabel2.setForeground(new Color(255, 0, 0));
+		jLabel2.setBounds(5, 20, 800, 20);
+		JRadioButton iptu = new JRadioButton("IPTU - SELECIONE E DIGITE O SETOR, OU O SETOR E QUADRA");
+		iptu.setBounds(5, 40, 800, 20);
+		JRadioButton nomeContribuinte = new JRadioButton("Nome do contribuinte - SELECIONE E DIGITE O NOME ");
+		nomeContribuinte.setBounds(5, 60, 800, 20);
+		JRadioButton cepImovel = new JRadioButton("Cep do imóvel - SELECIONE E DIGITE O CEP COM TRAÇO OU SEM");
+		cepImovel.setBounds(5,80,800,20);
+		JRadioButton referenciaImovel = new JRadioButton("Referência do imóvel - SELECIONE E DIGITE O NOME DO EDIFÍCIO");
+		referenciaImovel.setBounds(5, 100, 800, 20);
+		JLabel jLabel = new JLabel("DIGITE APENAS O QUE SELECIONOU!!!!");
+		jLabel.setForeground(new Color(255, 0, 0));
+		jLabel.setBounds(5, 120, 300, 20);
 		JTextField jTextField = new JTextField(20);
-		painelInputs.add(jTextField, "East");
+		jTextField.setBounds(5, 140, 300, 20);
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(iptu);
+		buttonGroup.add(nomeContribuinte);
+		buttonGroup.add(cepImovel);
+		buttonGroup.add(referenciaImovel);
+		painelInputs.add(jLabel2);
+		painelInputs.add(iptu);
+		painelInputs.add(nomeContribuinte);
+		painelInputs.add(cepImovel);
+		painelInputs.add(referenciaImovel);
+		painelInputs.add(jLabel);
+		painelInputs.add(jTextField);
 		JFileChooser chooser = new JFileChooser("C:/Users/Rafael/Desktop");
 		int retorno = chooser.showOpenDialog(null);
 		LeiaCVS obj = new LeiaCVS();
@@ -86,6 +105,7 @@ public class LeiaCVS implements ActionListener{
 		String line = "";
 		String csvDivisor = ";";
 		try {
+			filter = filter.trim();
 			br = new BufferedReader(new FileReader(file));
 			PrintWriter printWriter = new PrintWriter(file.getAbsolutePath() + "IPTU2017-" + filter + ".csv");
 			StringBuilder stringBuilder = new StringBuilder();
@@ -102,7 +122,7 @@ public class LeiaCVS implements ActionListener{
 				jumpLine = false;
 				for (int i = 0; i < 35; i++) {
 					if (filterSelected.equals("setorEQuadra")) {
-						if (register[0].contains(filter)) {
+						if (register[0].startsWith(filter)) {
 							addRegister(stringBuilder, register, i);
 							jumpLine = true;
 						}
