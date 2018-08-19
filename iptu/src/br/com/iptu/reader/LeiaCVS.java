@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 public class LeiaCVS implements ActionListener{
 	private static final String REFERENCIA_IMOVEL = "referenciaImovel";
 	private static final String CEP_IMOVEL = "cepImovel";
+	private static final String CEP_IMOVEL_MAIS_NUMERO = "cepImovelMaisNumero";
 	private static final String NOME_CONTRIBUINTE = "nomeContribuinte";
 	private static final String IPTU = "setorEQuadra";
 
@@ -50,22 +51,26 @@ public class LeiaCVS implements ActionListener{
 		nomeContribuinte.setBounds(5, 60, 800, 20);
 		JRadioButton cepImovel = new JRadioButton("Cep do imóvel - SELECIONE E DIGITE O CEP COM TRAÇO OU SEM");
 		cepImovel.setBounds(5,80,800,20);
+		JRadioButton cepImovelMaisNumero = new JRadioButton("Cep mais número - Ex: 04415000,360");
+		cepImovelMaisNumero.setBounds(5,100,800,20);
 		JRadioButton referenciaImovel = new JRadioButton("Referência do imóvel - SELECIONE E DIGITE O NOME DO EDIFÍCIO");
-		referenciaImovel.setBounds(5, 100, 800, 20);
+		referenciaImovel.setBounds(5, 120, 800, 20);
 		JLabel jLabel = new JLabel("DIGITE APENAS O QUE SELECIONOU!!!!");
 		jLabel.setForeground(new Color(255, 0, 0));
-		jLabel.setBounds(5, 120, 300, 20);
+		jLabel.setBounds(5, 140, 300, 20);
 		JTextField jTextField = new JTextField(20);
-		jTextField.setBounds(5, 140, 300, 20);
+		jTextField.setBounds(5, 160, 300, 20);
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(iptu);
 		buttonGroup.add(nomeContribuinte);
 		buttonGroup.add(cepImovel);
+		buttonGroup.add(cepImovelMaisNumero);
 		buttonGroup.add(referenciaImovel);
 		painelInputs.add(jLabel2);
 		painelInputs.add(iptu);
 		painelInputs.add(nomeContribuinte);
 		painelInputs.add(cepImovel);
+		painelInputs.add(cepImovelMaisNumero);
 		painelInputs.add(referenciaImovel);
 		painelInputs.add(jLabel);
 		painelInputs.add(jTextField);
@@ -85,6 +90,9 @@ public class LeiaCVS implements ActionListener{
 					}
 					if(cepImovel.isSelected()) {
 						run(jTextField.getText(), chooser.getSelectedFile(), CEP_IMOVEL);
+					}
+					if(cepImovelMaisNumero.isSelected()) {
+						run(jTextField.getText(), chooser.getSelectedFile(), CEP_IMOVEL_MAIS_NUMERO);
 					}
 					if(referenciaImovel.isSelected()) {
 						run(jTextField.getText(), chooser.getSelectedFile(), REFERENCIA_IMOVEL);
@@ -121,22 +129,30 @@ public class LeiaCVS implements ActionListener{
 				register = line.split(csvDivisor);
 				jumpLine = false;
 				for (int i = 0; i < 35; i++) {
-					if (filterSelected.equals("setorEQuadra")) {
+					if (filterSelected.equals(IPTU)) {
 						if (register[0].startsWith(filter)) {
 							addRegister(stringBuilder, register, i);
 							jumpLine = true;
 						}
-					} else if (filterSelected.equals("nomeContribuinte")) {
+					} else if (filterSelected.equals(NOME_CONTRIBUINTE)) {
 						if ((register[6].contains(filter)) || (register[9].contains(filter))) {
 							addRegister(stringBuilder, register, i);
 							jumpLine = true;
 						}
-					} else if (filterSelected.equals("cepImovel")) {
+					} else if (filterSelected.equals(CEP_IMOVEL)) {
 						if (register[17].replace("-", "").contains(filter.replace("-", ""))) {
 							addRegister(stringBuilder, register, i);
 							jumpLine = true;
 						}
-					} else if ((filterSelected.equals("referenciaImovel")) && (register[16].contains(filter))) {
+					} else if(filterSelected.equals(CEP_IMOVEL_MAIS_NUMERO)) {
+						String[] split = filter.split(",");
+						if (register[17].replace("-", "").contains(split[0].replace("-", ""))) {
+							if (register[13].contains(split[1])) {
+								addRegister(stringBuilder, register, i);
+								jumpLine = true;
+							}
+						}
+					}else if ((filterSelected.equals(REFERENCIA_IMOVEL)) && (register[16].contains(filter))) {
 						addRegister(stringBuilder, register, i);
 						jumpLine = true;
 					}
